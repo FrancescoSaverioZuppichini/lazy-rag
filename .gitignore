@@ -1,3 +1,5 @@
+# brag
+*.pdf
 # ruff
 .ruff_cache
 # Byte-compiled / optimized / DLL files
