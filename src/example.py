@@ -1,4 +1,4 @@
-from brag import embed, retrieve
+from brag.embed import embed, retrieve
 import os
 
 import torch
@@ -40,7 +40,7 @@ embeddings, images = embed(
 )
 print(embeddings[0].shape)
 
-from brag import embed_text
+from brag.embed import embed_text
 
 texts = [
     "Napoleon was a great general",
