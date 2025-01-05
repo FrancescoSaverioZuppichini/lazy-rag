@@ -164,7 +164,7 @@ wheels = [
 [[package]]
 name = "brag"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "colpali-engine" },
     { name = "pdf2image" },
