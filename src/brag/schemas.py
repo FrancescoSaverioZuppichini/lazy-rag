@@ -1,17 +1,14 @@
 from dataclasses import dataclass
 import multiprocessing
 from pathlib import Path, PurePath
-from typing import Literal, Optional, Union
+from typing import Literal, Optional, TypedDict, Union
 from pdf2image import convert_from_bytes, convert_from_path
 import requests
 from PIL import Image
 from .logger import logger
 from abc import ABC, abstractmethod
 
-
-class Document:
-
-    mime_type: Literal[
+MIME_TYPE = Literal[
         "image/jpeg",
         "image/png",
         "image/gif",
@@ -19,7 +16,11 @@ class Document:
         "image/tiff",
         "image/webp",
         "application/pdf",
-    ] = None
+    ] 
+
+class Document:
+    mime_type: MIME_TYPE = None
+
     @abstractmethod
     def __enter__(self) -> list[Image.Image]:
         pass
@@ -52,15 +53,7 @@ SUPPORTED_FORMATS = {
 class URLDocument(Document):
     url: str
     headers: Optional[dict[str, str]] = None
-    mime_type: Literal[
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/bmp",
-        "image/tiff",
-        "image/webp",
-        "application/pdf",
-    ] = None
+    mime_type: MIME_TYPE = None
     images: list[Image.Image] = None
 
     def __enter__(self) -> list[Image.Image]:
@@ -80,7 +73,7 @@ class URLDocument(Document):
         if media_type == "image":
             self.images = [Image.open(res.raw)]
         else:
-            self.images =  convert_from_bytes(
+            self.images = convert_from_bytes(
                 res.raw.data, thread_count=multiprocessing.cpu_count()
             )
         return self
@@ -105,11 +98,15 @@ class FileDocument(Document):
 
         self.mime_type = SUPPORTED_FORMATS[doc_format]
         if doc_format == ".pdf":
-            self.images =  convert_from_path(path, thread_count=multiprocessing.cpu_count())
+            self.images = convert_from_path(
+                path, thread_count=multiprocessing.cpu_count()
+            )
         else:
-            self.images =  [Image.open(path)]
+            self.images = [Image.open(path)]
 
         return self
 
     def __exit__(self, *args):
         pass
+
+
